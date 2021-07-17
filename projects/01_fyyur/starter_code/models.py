@@ -8,12 +8,10 @@ db = SQLAlchemy()
 
 class Show(db.Model):
     __tablename__ = 'shows'
-
-    venue_id = db.Column('venue_id', db.Integer, db.ForeignKey('venue.id'), primary_key=True)
-    artist_id = db.Column('artist_id', db.Integer, db.ForeignKey('artist.id'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    venue_id = db.Column('venue_id', db.Integer, db.ForeignKey('venue.id'))
+    artist_id = db.Column('artist_id', db.Integer, db.ForeignKey('artist.id'))
     start_time = db.Column('start_time', db.DateTime)
-#   artist = db.relationship("Artist", back_populates="venues")
-#   venue = db.relationship("Venue", back_populates="artists")
 
 class Venue(db.Model):
     __tablename__ = 'venue'
@@ -24,7 +22,7 @@ class Venue(db.Model):
     state = db.Column(db.String(120))
     address = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
+    genres = db.Column(db.ARRAY(db.String), nullable=False)
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     website = db.Column(db.String(120))
@@ -42,7 +40,7 @@ class Artist(db.Model):
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    genres = db.Column(db.String(120))
+    genres = db.Column(db.ARRAY(db.String), nullable=False)
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     website = db.Column(db.String(120))

@@ -143,7 +143,7 @@ def show_venue(venue_id):
   data_res = {
     "id": venue.id, 
     "name": venue.name, 
-    "genres": [venue.genres],
+    "genres": venue.genres,
     "address": venue.address,
     "city": venue.city,
     "state": venue.state, 
@@ -171,19 +171,20 @@ def create_venue_form():
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
+  form = VenueForm(request.form)
   error = False
   try:
-    name = request.form['name']
-    city = request.form['city']
-    state = request.form['state']
-    address = request.form['address']
-    phone = request.form['phone']
-    genres = request.form['genres']
-    image_link = request.form['image_link']
-    facebook_link = request.form['facebook_link']
-    website = request.form['website_link']
+    name = form.name.data
+    city = form.city.data
+    state = form.state.data
+    address = form.address.data
+    phone = form.phone.data
+    genres = form.genres.data
+    image_link = form.image_link.data
+    facebook_link = form.facebook_link.data
+    website = form.website_link.data
     seeking_talent = True if not (request.form.get('seeking_talent', None) is None) else False
-    seeking_description = request.form['seeking_description']
+    seeking_description = form.seeking_description.data
     
     venue = Venue(
       name = name,
@@ -312,7 +313,7 @@ def show_artist(artist_id):
   data_res = {
     "id": artist.id, 
     "name": artist.name, 
-    "genres": [artist.genres],
+    "genres": artist.genres,
     "city": artist.city,
     "state": artist.state, 
     "phone": artist.phone, 
@@ -341,16 +342,17 @@ def edit_artist(artist_id):
 def edit_artist_submission(artist_id):
   artist = Artist.query.get(artist_id)
   try:
-    artist.name = request.form['name']
-    artist.city = request.form['city']
-    artist.state = request.form['state']
-    artist.phone = request.form['phone']
-    artist.genres = request.form['genres']
-    artist.image_link = request.form['image_link']
-    artist.facebook_link = request.form['facebook_link']
-    artist.website = request.form['website_link']
+    artist.name = form.name.data
+    artist.city = form.city.data
+    artist.state = form.state.data
+    artist.phone = form.phone.data
+    artist.genres = form.genres.data
+    artist.image_link = form.image_link.data
+    artist.facebook_link = form.facebook_link.data
+    artist.website = form.website_link.data
     artist.seeking_venue = True if not (request.form.get('seeking_venue', None) is None) else False
-    artist.seeking_description = request.form['seeking_description']
+    artist.seeking_description = form.seeking_description.data
+
     db.session.commit()
   except:
     db.session.rollback()
@@ -369,18 +371,19 @@ def edit_venue(venue_id):
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
   venue = Venue.query.get(venue_id)
+  form = VenueForm(request.form)
   try:
-    venue.name = request.form['name']
-    venue.city = request.form['city']
-    venue.state = request.form['state']
-    venue.phone = request.form['phone']
-    venue.address = request.form['address']
-    venue.genres = request.form['genres']
-    venue.image_link = request.form['image_link']
-    venue.facebook_link = request.form['facebook_link']
-    venue.website = request.form['website_link']
+    venue.name = form.name.data
+    venue.city = form.city.data
+    venue.state = form.state.data
+    venue.phone = form.phone.data
+    venue.address = form.address.data
+    venue.genres = form.genres.data
+    venue.image_link = form.image_link.data
+    venue.facebook_link = form.facebook_link.data
+    venue.website = form.website_link.data
     venue.seeking_venue = True if not (request.form.get('seeking_talent', None) is None) else False
-    venue.seeking_description = request.form['seeking_description']
+    venue.seeking_description = form.seeking_description.data
     db.session.commit()
   except:
     db.session.rollback()
@@ -401,17 +404,18 @@ def create_artist_form():
 def create_artist_submission():
   # called upon submitting the new artist listing form
   error = False
+  form = ArtistForm(request.form)
   try:
-    name = request.form['name']
-    city = request.form['city']
-    state = request.form['state']
-    phone = request.form['phone']
-    genres = request.form['genres']
-    image_link = request.form['image_link']
-    facebook_link = request.form['facebook_link']
-    website = request.form['website_link']
+    name = form.name.data
+    city = form.city.data
+    state = form.state.data
+    phone = form.phone.data
+    genres = form.genres.data
+    image_link = form.image_link.data
+    facebook_link = form.facebook_link.data
+    website = form.website_link.data
     seeking_venue = True if not (request.form.get('seeking_venue', None) is None) else False
-    seeking_description = request.form['seeking_description']
+    seeking_description = form.seeking_description.data
     
     artist = Artist(
       name = name,
@@ -454,7 +458,7 @@ def shows():
 
   response = []
 
-  for show, artist, venue in db.session.query(Show, Venue, Artist).join(Venue).join(Artist):
+  for show, artist, venue in db.session.query(Show,Artist, Venue).join(Venue).join(Artist):
     data = {
       'venue_id': venue.id,
       'venue_name': venue.name,
@@ -478,10 +482,11 @@ def create_shows():
 def create_show_submission():
   # called to create new shows in the db, upon submitting new show listing form
   error = False
+  form = ShowForm(request.form)
   try:
-    artist_id = request.form['artist_id']
-    venue_id = request.form['venue_id']
-    start_time = request.form['start_time']
+    artist_id = form.artist_id.data
+    venue_id = form.venue_id.data
+    start_time = form.start_time.data
     
     show = Show(
       artist_id = artist_id,
